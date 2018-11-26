@@ -15,18 +15,19 @@ import java.util.List;
 
 public class Watch implements Runnable {
 	private WatchService watcher;
-	private Path Input_dir;
-	private Path Output_dir;
+	private File Input_dir;
+	private File Output_dir;
 	private WatchKey key;
 	private HashSet<Path> processed;
 	
 	
-	public Watch(Path input_dir, Path output_dir, Path error_dir) throws IOException{
+	public Watch(File input_dir, File output_dir, File error_dir) throws IOException{
 		this.watcher = FileSystems.getDefault().newWatchService();
 		this.Input_dir = input_dir;
 		this.Output_dir = output_dir;
-		this.key = input_dir.register(watcher, ENTRY_CREATE);
+		this.key = input_dir.toPath().register(watcher, ENTRY_CREATE);
 		processed = new HashSet<Path>();
+		
 		initializeWatch();
 		
 	}
@@ -45,20 +46,21 @@ public class Watch implements Runnable {
 					continue;
 				}
 				
-				Path filepath = Input_dir.resolve((Path) event.context());
-				if (processed.contains(filepath)) {
+				File filepath = new File(Input_dir, event.context().toString());
+				if (processed.contains(filepath.toPath())) {
 					continue;
 				}
 				try {
-					this.processFile(filepath);
+					this.processFile(filepath.toPath());
 				} catch (IOException e) {
 					System.out.println(e.getMessage());
 					e.printStackTrace();
 				} 
-				processed.add(filepath);
-				filepath.toFile().delete();
+				processed.add(filepath.toPath());
+				filepath.delete();
 			}
 			if(!this.key.reset()) {
+				System.out.println("ERROR: Broken Key");
 				break;
 			}
 		}
@@ -67,30 +69,45 @@ public class Watch implements Runnable {
 	
 
 	private void initializeWatch() throws IOException  {
-		File folder = new File(Input_dir.toString());
-		for(File file: folder.listFiles()) {
-			Path filepath = Input_dir.resolve(file.toPath());
-			this.processFile(filepath);
+		for(File file: Input_dir.listFiles()) {
+			this.processFile(file.toPath());
 		}
 	}
 	
 	private void processFile(Path filepath) throws IOException {
+		
 		CSVReader r = new CSVReader(filepath);
 		List<String[]> data = r.readfile();
 		JSONWriter j = new JSONWriter(Output_dir);
 		String nameString = filepath.getFileName().toString();
-		j.WriteToJSON(Output_dir.resolve(
-				nameString.substring(0, nameString.lastIndexOf('.'))+".json"), data);
+		j.WriteToJSON(new File(
+				Output_dir, 
+				nameString.substring(0, nameString.lastIndexOf('.'))+".json"
+				), data);
+		System.out.println("Json written");
 		processed.add(filepath);
+		filepath.toFile().delete();
+		
 	}
 	
 
 	public static void main(String[] args) {
-		Path input = Paths.get("C:\\Users\\fbpea\\Git_Repositories\\ScoirExam\\input");
-		Path output = Paths.get("C:\\Users\\fbpea\\Git_Repositories\\ScoirExam\\output");
-		Path error = Paths.get("C:\\Users\\fbpea\\Git_Repositories\\ScoirExam\\Error");
-		cleanDirectory(output);
-		cleanDirectory(error);
+		File input = Paths.get(args[0]).toFile();
+		File output = new File(input.getParentFile(), "Output");
+		File error = new File(input.getParentFile(), "Error");
+
+		if (output.exists()) {
+			cleanDirectory(output);
+		} else {
+			output.mkdir();
+		}
+		if (error.exists()) {
+			cleanDirectory(error);
+		} else {
+			error.mkdir();
+		}
+		
+		
 		try {
 			Watch watcher = new Watch(input, output, error);
 			watcher.run();
@@ -100,8 +117,8 @@ public class Watch implements Runnable {
 		
 	}
 	
-	private static void cleanDirectory(Path dir) {
-		for (File file: dir.toFile().listFiles())
+	private static void cleanDirectory(File dir) {
+		for (File file: dir.listFiles())
 		    file.delete();
 	}
 
