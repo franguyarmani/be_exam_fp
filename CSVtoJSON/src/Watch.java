@@ -27,18 +27,14 @@ public class Watch implements Runnable {
 		this.Output_dir = output_dir;
 		this.key = input_dir.toPath().register(watcher, ENTRY_CREATE);
 		processed = new HashSet<Path>();
-		
-		initializeWatch();
-		
+		initializeWatch();	
 	}
 	
 	
 	public void run() {
-		System.out.println("watcher started");
 		for(;;) {
 			
 			this.key = getKey();
-			System.out.println("key signaled");
 			List<WatchEvent<?>> events = key.pollEvents();
 			for(WatchEvent<?> event: events) {
 				if(event.kind() == OVERFLOW) {
@@ -53,7 +49,7 @@ public class Watch implements Runnable {
 				try {
 					this.processFile(filepath.toPath());
 				} catch (IOException e) {
-					System.out.println(e.getMessage());
+					System.out.println("IO was interruped in run method");
 					e.printStackTrace();
 				} 
 				processed.add(filepath.toPath());
@@ -64,7 +60,6 @@ public class Watch implements Runnable {
 				break;
 			}
 		}
-		
 	}
 	
 
@@ -84,7 +79,6 @@ public class Watch implements Runnable {
 				Output_dir, 
 				nameString.substring(0, nameString.lastIndexOf('.'))+".json"
 				), data);
-		System.out.println("Json written");
 		processed.add(filepath);
 		filepath.toFile().delete();
 		
@@ -114,7 +108,6 @@ public class Watch implements Runnable {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
 	}
 	
 	private static void cleanDirectory(File dir) {
@@ -126,11 +119,10 @@ public class Watch implements Runnable {
 		try {
 			return this.watcher.take();
 		} catch (InterruptedException e) {
-			System.out.println("Interrupted");
+			System.out.println("Interrupted while getting key");
 			e.printStackTrace();
 			return null;
 		}
-		
 	}
 
 	public void setKey(WatchKey key) {
