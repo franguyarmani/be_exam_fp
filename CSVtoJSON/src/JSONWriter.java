@@ -16,21 +16,19 @@ public class JSONWriter {
 		this.dir = dir;
 	}
 	
-	public void WriteToJSON(Path name, List<String[]> data) throws IOException {
+	public void WriteToJSON(Path name, List<String[]> data) throws IOException  {
 		JSONArray obj = buildJSON(data);
-
 		writeToFile(this.dir.resolve(name), obj);
-
 	}
+	
+	
 	
 	private JSONArray buildJSON(List<String[]> data) {
 		data.remove(0);
 		JSONArray entries = new JSONArray();
 		for(String[] person:data) {
-			
 			JSONObject entry = new JSONObject();
 			entry.put("id", person[0]);
-
 			JSONObject name = new JSONObject();
 			name.put("first", person[1]);
 			if (person[2].length() > 0) {
@@ -38,15 +36,14 @@ public class JSONWriter {
 			}
 			name.put("last", person[3]);
 			entry.put("name", name);
-			
 			entry.put("phone", person[4]);
-	
 			entries.add(entry);
 		}
-		
-		return entries;
-		
+		return entries;	
 	}
+	
+	
+	
 	
 	private void writeToFile(Path path, JSONArray obj) throws IOException{
 		FileWriter w = new FileWriter(path.toString());
@@ -54,9 +51,4 @@ public class JSONWriter {
 		w.write(pretty.toJson(obj));
 		w.close();
 	}
-	
-	
-	
-	
-
 }
