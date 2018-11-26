@@ -1,3 +1,4 @@
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -9,16 +10,17 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 public class JSONWriter {
-	private Path dir;
+	private File dir;
 	
 	
-	JSONWriter(Path dir){
+	JSONWriter(File dir){
 		this.dir = dir;
 	}
 	
-	public void WriteToJSON(Path name, List<String[]> data) throws IOException  {
+	public void WriteToJSON(File file, List<String[]> data) throws IOException  {
 		JSONArray obj = buildJSON(data);
-		writeToFile(this.dir.resolve(name), obj);
+		System.out.println("json obj built");
+		writeToFile(file, obj);
 	}
 	
 	
@@ -45,8 +47,10 @@ public class JSONWriter {
 	
 	
 	
-	private void writeToFile(Path path, JSONArray obj) throws IOException{
-		FileWriter w = new FileWriter(path.toString());
+	private void writeToFile(File file, JSONArray obj) throws IOException{
+		System.out.println("in write to File");
+		FileWriter w = new FileWriter(file.toString());
+		System.out.println("made FileWriter");
 		Gson pretty = new GsonBuilder().setPrettyPrinting().create();
 		w.write(pretty.toJson(obj));
 		w.close();
