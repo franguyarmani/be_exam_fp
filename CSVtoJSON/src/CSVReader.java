@@ -2,15 +2,10 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.json.simple.JSONObject;
+import java.util.Scanner;
 
 
 public class CSVReader {
@@ -25,21 +20,33 @@ public class CSVReader {
 	
 	List<String[]> readfile() throws IOException {
 		List<String[]> data = new ArrayList<String[]>();
-		int lineNumber = 0;
+		scanner.nextLine();
+		int lineNumber = 1;
 		while (scanner.hasNextLine()) {
 			String[] line = scanner.nextLine().split(",");
 			try {
 				this.checkForErrors(line, lineNumber);
 			} catch (MalformedDataException e) {
-				File ErrorFile = new File(this.file.getParent().getParent().resolve("Error").toString());
-				BufferedWriter bw = new BufferedWriter(new FileWriter(ErrorFile, true));
-				bw.append(e.getLineNumber()+","+e.getMessage());
+				System.out.println("error caught in CSVReader");
+				writeError(e, this.file);
+				lineNumber+=1;
+				continue;
 			}
 			data.add(line);
 			lineNumber+=1;
 		}
 		return data;
-
+		
+	}
+	
+	static void writeError(MalformedDataException e, Path pathToError) throws IOException {
+		File ErrorFolder = new File(pathToError.getParent().getParent().resolve("Error").toString());
+		File ErrorFile = new File(ErrorFolder,pathToError.getFileName().toString());
+		BufferedWriter bw = new BufferedWriter(new FileWriter(ErrorFile, true));
+		bw.write(e.getLineNumber()+","+e.getMessage()+"\n");
+		
+		bw.flush();
+		bw.close();
 		
 		
 	}
