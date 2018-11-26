@@ -26,25 +26,20 @@ public class CSVReader {
 			String[] line = scanner.nextLine().split(",");
 			try {
 				this.checkForErrors(line, lineNumber);
+				data.add(line);
 			} catch (MalformedDataException e) {
-				System.out.println("error caught in CSVReader");
 				writeError(e, this.file);
-				lineNumber+=1;
-				continue;
 			}
-			data.add(line);
 			lineNumber+=1;
 		}
 		return data;
-		
 	}
 	
 	static void writeError(MalformedDataException e, Path pathToError) throws IOException {
 		File ErrorFolder = new File(pathToError.getParent().getParent().resolve("Error").toString());
 		File ErrorFile = new File(ErrorFolder,pathToError.getFileName().toString());
 		BufferedWriter bw = new BufferedWriter(new FileWriter(ErrorFile, true));
-		bw.write(e.getLineNumber()+","+e.getMessage()+"\n");
-		
+		bw.write("Line: "+ e.getLineNumber()+","+e.getMessage()+"\n");
 		bw.flush();
 		bw.close();
 		
@@ -52,6 +47,9 @@ public class CSVReader {
 	}
 	
 	private void checkForErrors(String[] line, int lineNumber) throws MalformedDataException  {
+		if (line.length == 0) {
+			throw new MalformedDataException("Empty Line", lineNumber);
+		}
 		if (line.length != 5) {
 			throw new MalformedDataException("Wrong Number of Elements", lineNumber);
 		}
