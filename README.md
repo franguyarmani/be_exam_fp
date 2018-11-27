@@ -21,34 +21,36 @@ There are 2 methods to run this assignment. The 'Easy Way', which I recommend yo
 
 Easy Way:
 
-	1. Download the the file 'CSVtoJSON.jar' to the location of your choice.
+1. Download the the file 'CSVtoJSON.jar' to the location of your choice.
 
-	2. Use command 'java -jar CSVtoJSON.jar C:\absolute\path\to\your\input\directory' inserting your own input own directory
+2. Use command 'java -jar CSVtoJSON.jar C:\absolute\path\to\your\input\directory' inserting your own input own directory
 
-	3. Output and Error directories will be created in the parent directory of your input directory. If they already exist, their contents will be deleted.
+3. Output and Error directories will be created in the parent directory of your input directory. If they already exist, their contents will be deleted.
 
-	4. add files to the input directory at your leisure
+4. add files to the input directory at your leisure
 
-	5. Use keyboard interrupt to stop the program. 
+5. Use keyboard interrupt to stop the program. 
 
 Hard Way: 
-	1. Download the src from the repo as well as the 2 dependent libraries (contained in the jars folder). 
-	2. Configure your own build environment (I used eclispe) and compile the source with the 2 libraries mentioned. 
-	3. The commands for running the project depend your build tools, but once compiled, the only arguement needed should be the path the the input folder, same as the easy way. 
+	
+1. Download the src from the repo as well as the 2 dependent libraries (contained in the jars folder). 
+	
+2. Configure your own build environment (I used eclispe) and compile the source with the 2 libraries mentioned. 
+	
+3. The commands for running the project depend your build tools, but once compiled, the only arguement needed should be the path the the input folder, same as the easy way. 
 
 
 ===ASSUMPTIONS===
 
-	1. External Libraries are permissible
+1. External Libraries are permissible
 
-	2. Each CSV can contain more that one person
+2. Each CSV can contain more that one person
 
-	3. Column header names will not change
+3. Column header names will not change
 
+4. CSV input files are zero indexed on the header row. Therefore the first row of data is at line 1. 
 
-	4. CSV input files are zero indexed on the header row. Therefore the first row of data is at line 1. 
-
-	5. Error files do not require headers
+5. Error files do not require headers
 	
 +++++NOTES+++++
 
