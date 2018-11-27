@@ -37,7 +37,7 @@ Hard Way:
 	
 2. Configure your own build environment (I used eclispe) and compile the source with the 2 libraries mentioned. 
 	
-3. The commands for running the project depend your build tools, but once compiled, the only arguement needed should be the path the the input folder, same as the easy way. 
+3. The commands for running the project depend your build tools, but once compiled, the only arguement needed should be the path to the input folder, same as the easy way. 
 
 
 ===ASSUMPTIONS===
